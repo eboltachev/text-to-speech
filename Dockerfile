@@ -5,7 +5,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     UV_LINK_MODE=copy \
-    UV_SYSTEM_PYTHON=1
+    UV_SYSTEM_PYTHON=0 \
+    VIRTUAL_ENV=/opt/venv \
+    PATH=/opt/venv/bin:$PATH
 
 ARG INSTALL_FLASH_ATTN=1
 ARG FLASH_ATTN_MAX_JOBS=4
@@ -25,7 +27,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sox \
  && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --upgrade pip setuptools wheel uv
+# Avoid PEP 668 (externally-managed environment) by using an isolated venv.
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip setuptools wheel uv
 
 WORKDIR /opt
 RUN git clone --depth 1 https://github.com/vllm-project/vllm-omni.git

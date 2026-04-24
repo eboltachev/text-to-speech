@@ -16,6 +16,12 @@ curl http://localhost:8091/health
 curl http://localhost:8091/v1/models
 ```
 
+## Почему была ошибка при сборке
+
+Если вы видели ошибку вида `externally-managed-environment` / ссылку на PEP 668 на шаге `python3 -m pip install ...`, причина в том, что в Ubuntu 24.04 системный Python защищён от установки пакетов в system-site-packages.
+
+В Dockerfile это исправлено: зависимости ставятся в отдельное виртуальное окружение `/opt/venv`, поэтому установка больше не конфликтует с PEP 668.
+
 ## Соответствие гайду NVIDIA (проверочный список)
 
 - Устанавливаются системные зависимости `ffmpeg` и `sox`.
